@@ -1,0 +1,24 @@
+{
+  "name": "cfga",
+  "version": "0.0.1",
+  "description": "The Cloudflare Workers implementation of an async Google Analytics",
+  "main": "cfga.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SukkaW/cloudflare-workers-async-google-analytics.git"
+  },
+  "keywords": [
+    "cloudflare",
+    "cloudflare-workers",
+    "google-analytics"
+  ],
+  "author": "Sukka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SukkaW/cloudflare-workers-async-google-analytics/issues"
+  },
+  "homepage": "https://github.com/SukkaW/cloudflare-workers-async-google-analytics#readme"
+}
