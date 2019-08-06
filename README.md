@@ -29,9 +29,9 @@ Just add those few lines of the code to your website, right before `</body>`. Do
 ```html
 <script>
 window.ga_tid = "UA-XXXXX-Y"; // {String} The trackerID of your site.
-window.ga_url = "https://example.com/xxx/"; // {String} The route of your cloudflare workers you just registered before.
+window.ga_api = "https://example.com/xxx/"; // {String} The route of your cloudflare workers you just registered before.
 </script>
-<script src="https://cdn.jsdelivr.net/npm/cfga@1.0.0" async></script>
+<script src="https://cdn.jsdelivr.net/npm/cfga@1.0.1" async></script>
 ```
 
 ### 3. Watch this repo with `Releases Only`.
