@@ -2,8 +2,9 @@
     var screen = window.screen,
         encode = encodeURIComponent,
         max = Math.max,
-        min = Math.min,
-        t = window.performance.timing;
+        //min = Math.min,
+        t = window.performance.timing,
+        filterNumber = function (num) { return isNaN(num) || num == Infinity || num < 0 ? void 0 : num; };
 
     // sendGA: collect data and send.
     function sendGA() {
@@ -27,30 +28,30 @@
             // plt: Page Loading Time
             // open the page => window.onload
             // (window.onload)
-            'plt=' + encode(t.loadEventStart - t.navigationStart || 0),
+            'plt=' + filterNumber(t.loadEventStart - t.navigationStart || 0),
             // dns: DNS Time
-            'dns=' + encode(t.domainLookupEnd - t.domainLookupStart || 0),
+            'dns=' + filterNumber(t,domainLookupEnd - t.domainLookupStart || 0),
             // pdt: Page Dowenload Time
             // start download time => finish download time
-            'pdt=' + encode(t.responseEnd - t.responseStart || 0),
+            'pdt=' + filterNumber(t,responseEnd - t.responseStart || 0),
             // rrt: Redirect Time
-            'rrt=' + encode(t.redirectEnd - t.redirectStart || 0),
+            'rrt=' + filterNumber(t,redirectEnd - t.redirectStart || 0),
             // tcp: TCP Time
-            'tcp=' + encode(t.connectEnd - t.connectStart || 0),
+            'tcp=' + filterNumber(t,connectEnd - t.connectStart || 0),
             // srt: Server Response Time
             // start request => server send first byte
             // (TTFB - TCP - DNS)
-            'srt=' + encode(t.responseStart - t.requestStart || 0),
+            'srt=' + filterNumber(t,responseStart - t.requestStart || 0),
             // dit: DOM Interactive Time
-            'dit=' + encode(t.domInteractive - t.domLoading || 0),
+            'dit=' + filterNumber(t,domInteractive - t.domLoading || 0),
             // clt: Content Loading Time
             // open the page => DOMContentLoaded
-            'clt=' + encode(t.domContentLoadedEventStart - t.navigationStart || 0),
+            'clt=' + filterNumber(t,domContentLoadedEventStart - t.navigationStart || 0),
             'z=' + Date.now()
         ];
 
         window.__ga_img = new Image();
-        window.__ga_img.src = url + '?' + pv_data.join('&');;
+        window.__ga_img.src = url + '?' + pv_data.join('&');
     }
 
     if (document.readyState === 'complete') {
