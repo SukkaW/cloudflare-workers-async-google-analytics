@@ -1,14 +1,5 @@
 //const AllowedReferrer = 'skk.moe';
 
-const createUuid = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        let r = Math.random() * 16 | 0,
-            v = (c == 'x') ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-};
-const encode = (data) => encodeURIComponent(decodeURIComponent(data));
-
 addEventListener('fetch', (event) => {
     event.respondWith(response(event));
 });
@@ -19,6 +10,20 @@ async function senData(pvUrl, perfUrl, reqParameter) {
 }
 
 async function response(event) {
+    const createUuid = () => {
+        let s = [];
+        const hexDigits = '0123456789abcdef';
+        for (let i = 0; i < 36; i++) {
+            s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+        }
+        s[14] = '4'; // bits 12-15 of the time_hi_and_version field to 0010
+        s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+        s[8] = s[13] = s[18] = s[23] = '-';
+
+        return s.join('');
+    };
+    const encode = (data) => encodeURIComponent(decodeURIComponent(data));
+
     const url = new URL(event.request.url);
 
     const getReqHeader = (key) => event.request.headers.get(key);
@@ -33,20 +38,21 @@ async function response(event) {
         return (r !== null) ? unescape(r[2]) : null;
     };
 
+    const Referer = getReqHeader('Referer');
+    const user_agent = getReqHeader('User-Agent');
+    const ga_tid = getQueryString('ga');
+
     const hasUuid = getCookie('uuid');
-    const uuid = (hasUuid) ? getCookie('uuid') : createUuid();
+    const uuid = (hasUuid) ? hasUuid : createUuid();
 
     let response;
 
     let needBlock = false;
-    (!getReqHeader('Referer') || !getReqHeader('User-Agent') || !getQueryString('ga')) ? needBlock = true : needBlock = false;
+    (!Referer || !user_agent || !ga_tid) ? needBlock = true : needBlock = false;
 
-    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null) {
-        if (AllowedReferrer && getReqHeader('Referer')) {
-            (!(getReqHeader('Referer').indexOf(AllowedReferrer) > -1)) ? needBlock = true : needBlock = false;
-        }
+    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && Referer) {
+        (!(Referer.indexOf(AllowedReferrer) > -1)) ? needBlock = true : needBlock = false;
     }
-
 
     // Block Request that have no referer, no user-agent and no ga query.
     if (needBlock) {
@@ -58,62 +64,17 @@ async function response(event) {
 
         return response;
     } else {
-        const pvData = [
-            // UA-XXXXXX-Y
-            'tid=' + encode(getQueryString('ga')),
-            // UUID Version 4
-            'cid=' + uuid,
-            // Document URL
-            'dl=' + encode(getReqHeader('Referer')),
-            // Real IP - Collect from CF-Connecting-IP
-            'uip=' + getReqHeader('CF-Connecting-IP'),
-            // Title
-            'dt=' + encode(getQueryString('dt')),
-            // Document Encoding
-            'de=' + encode(getQueryString('de')),
-            // Referrer
-            'dr=' + encode(getQueryString('dr')),
-            // Language
-            'ul=' + encode(getQueryString('ul')),
-            // Color Depth
-            'sd=' + encode(getQueryString('sd')),
-            // Screen Size
-            'sr=' + encode(getQueryString('sr')),
-            // Display
-            'vp=' + encode(getQueryString('vp')),
-            'z=' + getQueryString('z')
-        ];
+        const pvData = `tid=${encode(ga_tid)}&cid=${uuid}&dl=${encode(Referer)}&uip=${getReqHeader('CF-Connecting-IP')}&ua=${user_agent}&dt=${encode(getQueryString('dt'))}&de=${encode(getQueryString('de'))}&dr=${encode(getQueryString('dr'))}&ul=${getQueryString('ul')}&sd=${getQueryString('sd')}&sr=${getQueryString('sr')}&vp=${getQueryString('vp')}&z=${getQueryString('z')}`;
 
-        const perfData = [
-            // plt: Page Loading Time
-            'plt=' + getQueryString('plt'),
-            // dns: DNS Time
-            'dns=' + getQueryString('dns'),
-            // pdt: Page Dowenload Time
-            // start download time => finish download time
-            'pdt=' + getQueryString('pdt'),
-            // rrt: Redirect Time
-            'rrt=' + getQueryString('rrt'),
-            // tcp: TCP Time
-            'tcp=' + getQueryString('tcp'),
-            // srt: Server Response Time
-            // start request => server send first byte
-            // (TTFB - TCP - DNS)
-            'srt=' + getQueryString('srt'),
-            // dit: DOM Interactive Time
-            'dit=' + getQueryString('dit'),
-            // clt: Content Loading Time
-            // open the page => DOMContentLoaded
-            'clt=' + getQueryString('clt')
-        ];
+        const perfData = `plt=${getQueryString('plt')}&dns=${getQueryString('dns')}&pdt=${getQueryString('pdt')}&rrt=${getQueryString('rrt')}&tcp=${getQueryString('tcp')}&srt=${getQueryString('srt')}&dit=${getQueryString('dit')}&clt=${getQueryString('clt')}`
 
-        const pvUrl = `https://www.google-analytics.com/collect?v=1&t=pageview&${pvData.join('&')}`;
-        const perfUrl = `https://www.google-analytics.com/collect?v=1&t=timing&${pvData.concat(perfData).join('&')}`
+        const pvUrl = `https://www.google-analytics.com/collect?v=1&t=pageview&${pvData}`;
+        const perfUrl = `https://www.google-analytics.com/collect?v=1&t=timing&${pvData}&${perfData}`
 
         let parameter = {
             headers: {
                 'Host': 'www.google-analytics.com',
-                'User-Agent': getReqHeader('User-Agent'),
+                'User-Agent': user_agent,
                 'Accept': getReqHeader('Accept'),
                 'Accept-Language': getReqHeader('Accept-Language'),
                 'Accept-Encoding': getReqHeader('Accept-Encoding'),
@@ -121,12 +82,8 @@ async function response(event) {
             }
         };
 
-        if (event.request.headers.has('Referer')) {
-            parameter.headers.Referer = getReqHeader('Referer');
-        }
-        if (event.request.headers.has('Origin')) {
-            parameter.headers.Origin = getReqHeader('Origin');
-        }
+        // To sent data to google analytics after response id finished
+        event.waitUntil(senData(pvUrl, perfUrl, parameter));
 
         // Return an 204 to speed up: No need to download a gif
         response = new Response(null, {
@@ -138,9 +95,6 @@ async function response(event) {
             const cookieContent = `uuid=${uuid}; Expires=${new Date((new Date().getTime() + 365 * 86400 * 30 * 1000)).toGMTString()}; Path='/';`;
             response.headers.set('Set-Cookie', cookieContent)
         }
-
-        // To sent data to google analytics after response id finished
-        event.waitUntil(senData(pvUrl, perfUrl, parameter));
 
         return response
     }
