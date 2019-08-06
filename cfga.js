@@ -1,16 +1,17 @@
-(function (ga, url, window, document, navigator) {
+(function (window, document, navigator) {
     var screen = window.screen,
         encode = encodeURIComponent,
         max = Math.max,
         //min = Math.min,
-        t = window.performance.timing,
+        performance = window.performance,
+        t = performance && performance.timing;
         filterNumber = function (num) { return isNaN(num) || num == Infinity || num < 0 ? void 0 : num; };
 
     // sendGA: collect data and send.
     function sendGA() {
         var pv_data = [
             // GA tid
-            'ga=' + ga,
+            'ga=' + window.ga_tid,
             // Title
             'dt=' + encode(document.title),
             // Document Encoding
@@ -51,7 +52,7 @@
         ];
 
         window.__ga_img = new Image();
-        window.__ga_img.src = url + '?' + pv_data.join('&');
+        window.__ga_img.src = window.ga_api + '?' + pv_data.join('&');
     }
 
     if (document.readyState === 'complete') {
@@ -59,4 +60,4 @@
     } else {
         window.addEventListener('load', sendGA);
     }
-})(window.ga_tid, window.ga_api, window, document, navigator);
+})(window, document, navigator);

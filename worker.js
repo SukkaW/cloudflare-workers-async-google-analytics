@@ -56,7 +56,7 @@ async function response(event) {
 
     // Block Request that have no referer, no user-agent and no ga query.
     if (needBlock) {
-        response = new Response('<html>403 Forbidden</html>', {
+        response = new Response('403 Forbidden', {
             headers: { 'Content-Type': 'text/html' },
             status: 403,
             statusText: 'Forbidden'
@@ -64,12 +64,12 @@ async function response(event) {
 
         return response;
     } else {
-        const pvData = `tid=${encode(ga_tid)}&cid=${uuid}&dl=${encode(Referer)}&uip=${getReqHeader('CF-Connecting-IP')}&ua=${user_agent}&dt=${encode(getQueryString('dt'))}&de=${encode(getQueryString('de'))}&dr=${encode(getQueryString('dr'))}&ul=${getQueryString('ul')}&sd=${getQueryString('sd')}&sr=${getQueryString('sr')}&vp=${getQueryString('vp')}&z=${getQueryString('z')}`;
+        const pvData = `tid=${encode(ga_tid)}&cid=${uuid}&dl=${encode(Referer)}&uip=${getReqHeader('CF-Connecting-IP')}&ua=${user_agent}&dt=${encode(getQueryString('dt'))}&de=${encode(getQueryString('de'))}&dr=${encode(getQueryString('dr'))}&ul=${getQueryString('ul')}&sd=${getQueryString('sd')}&sr=${getQueryString('sr')}&vp=${getQueryString('vp')}`;
 
         const perfData = `plt=${getQueryString('plt')}&dns=${getQueryString('dns')}&pdt=${getQueryString('pdt')}&rrt=${getQueryString('rrt')}&tcp=${getQueryString('tcp')}&srt=${getQueryString('srt')}&dit=${getQueryString('dit')}&clt=${getQueryString('clt')}`
 
-        const pvUrl = `https://www.google-analytics.com/collect?v=1&t=pageview&${pvData}`;
-        const perfUrl = `https://www.google-analytics.com/collect?v=1&t=timing&${pvData}&${perfData}`
+        const pvUrl = `https://www.google-analytics.com/collect?v=1&t=pageview&${pvData}&z=${getQueryString('z')}`;
+        const perfUrl = `https://www.google-analytics.com/collect?v=1&t=timing&${pvData}&${perfData}&z=${getQueryString('z')}`
 
         let parameter = {
             headers: {
