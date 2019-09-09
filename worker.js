@@ -45,7 +45,7 @@ async function response(event) {
     const user_agent = getReqHeader('User-Agent');
     const ref_host = (() => {
       try {
-        return new URL(Referer).host
+        return new URL(Referer).hostname
       } catch (e) {
         return ""
       }
@@ -54,7 +54,7 @@ async function response(event) {
     let needBlock = false;
     (!ref_host || !user_agent || !url.search.includes('ga=UA-')) ? needBlock = true : needBlock = false;
     if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && ref_host) {
-        (!ref_host.startsWith(AllowedReferrer)) ? needBlock = true : needBlock = false;
+        (!ref_host.endsWith(`.${AllowedReferrer}`) && ![AllowedReferrer].includes(ref_host)) ? needBlock = true : needBlock = false;
     }
 
     if (needBlock) {
