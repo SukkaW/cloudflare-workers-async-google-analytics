@@ -43,11 +43,18 @@ async function response(event) {
 
     const Referer = getReqHeader('Referer');
     const user_agent = getReqHeader('User-Agent');
+    const ref_host = (() => {
+      try {
+        return new URL(Referer).host
+      } catch (e) {
+        return ""
+      }
+    })()
 
     let needBlock = false;
-    (!Referer || !user_agent || !url.search.includes('ga=UA-')) ? needBlock = true : needBlock = false;
-    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && Referer) {
-        (!Referer.includes(AllowedReferrer)) ? needBlock = true : needBlock = false;
+    (!ref_host || !user_agent || !url.search.includes('ga=UA-')) ? needBlock = true : needBlock = false;
+    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && ref_host) {
+        (!ref_host.startsWith(AllowedReferrer)) ? needBlock = true : needBlock = false;
     }
 
     if (needBlock) {
