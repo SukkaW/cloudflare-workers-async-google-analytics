@@ -1,4 +1,4 @@
-//const AllowedReferrer = 'skk.moe';
+//const AllowedReferrer = 'skk.moe'; // ['skk.moe', 'suka.js.org'] multiple domains is supported in array format
 
 addEventListener('fetch', (event) => {
     event.respondWith(response(event));
@@ -43,18 +43,24 @@ async function response(event) {
 
     const Referer = getReqHeader('Referer');
     const user_agent = getReqHeader('User-Agent');
-    const ref_host = (() => {
-      try {
-        return new URL(Referer).hostname
-      } catch (e) {
-        return ""
-      }
-    })()
+    const ref_host = (() => {	
+        try {
+            return new URL(Referer).hostname;
+        } catch (e) {
+            return ""
+        }
+    })();
+
+    let _AllowedReferrer = AllowedReferrer;
+
+    if (!Array.isArray(AllowedReferrer)) _AllowedReferrer = [_AllowedReferrer];
+    
+    const rAllowedReferrer = new RegExp(_AllowedReferrer.join('|'), 'g');
 
     let needBlock = false;
     (!ref_host || !user_agent || !url.search.includes('ga=UA-')) ? needBlock = true : needBlock = false;
-    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && ref_host) {
-        (!ref_host.endsWith(`.${AllowedReferrer}`) && ![AllowedReferrer].includes(ref_host)) ? needBlock = true : needBlock = false;
+    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && _AllowedReferrer) {
+        (rAllowedReferrer.test(ref_host)) ? needBlock = true : needBlock = false;
     }
 
     if (needBlock) {
