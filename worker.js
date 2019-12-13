@@ -51,16 +51,19 @@ async function response(event) {
         }
     })();
 
-    let _AllowedReferrer = AllowedReferrer;
-
-    if (!Array.isArray(AllowedReferrer)) _AllowedReferrer = [_AllowedReferrer];
-    
-    const rAllowedReferrer = new RegExp(_AllowedReferrer.join('|'), 'g');
-
     let needBlock = false;
-    (!ref_host || !user_agent || !url.search.includes('ga=UA-')) ? needBlock = true : needBlock = false;
-    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer && _AllowedReferrer) {
-        (rAllowedReferrer.test(ref_host)) ? needBlock = true : needBlock = false;
+
+    needBlock = (!ref_host || ref_host === '' || !user_agent || !url.search.includes('ga=UA-')) ? true : false;
+
+    if (typeof AllowedReferrer !== 'undefined' && AllowedReferrer !== null && AllowedReferrer) {
+      let _AllowedReferrer = AllowedReferrer;
+
+      if (!Array.isArray(AllowedReferrer)) _AllowedReferrer = [_AllowedReferrer];
+    
+      const rAllowedReferrer = new RegExp(_AllowedReferrer.join('|'), 'g');
+
+      needBlock = (!rAllowedReferrer.test(ref_host)) ? true : false;
+      console.log(_AllowedReferrer, rAllowedReferrer, ref_host);
     }
 
     if (needBlock) {
