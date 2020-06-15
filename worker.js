@@ -8,11 +8,7 @@ async function senData(event, url, uuid, user_agent, page_url) {
     const encode = (data) => encodeURIComponent(decodeURIComponent(data));
 
     const getReqHeader = (key) => event.request.headers.get(key);
-    const getQueryString = (name) => {
-        const pattern = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-        const r = url.search.substr(1).match(pattern);
-        return (r !== null) ? unescape(r[2]) : null;
-    };
+    const getQueryString = (name) => url.searchParams.get(name);
 
     const reqParameter = {
         headers: {
@@ -43,11 +39,11 @@ async function response(event) {
 
     const Referer = getReqHeader('Referer');
     const user_agent = getReqHeader('User-Agent');
-    const ref_host = (() => {	
+    const ref_host = (() => {
         try {
             return new URL(Referer).hostname;
         } catch (e) {
-            return ""
+            return ''
         }
     })();
 
