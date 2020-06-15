@@ -5,11 +5,15 @@
         //min = Math.min,
         performance = window.performance,
         t = performance && performance.timing,
-        filterNumber = function (num) { return isNaN(num) || num == Infinity || num < 0 ? void 0 : num; };
+        filterNumber = function (num) { return isNaN(num) || num == Infinity || num < 0 ? void 0 : num; },
+        randomStr = function (num) { return Math.random().toString(36).slice(-num); },
+        randomNum = function (num) { return Math.ceil(Math.random() * (num - 1)) + 1; };
 
     // sendGA: collect data and send.
     function sendGA() {
         var pv_data = [
+            // Random String against Easy Privacy
+            randomStr(randomNum(4)) + '=' + randomStr(randomNum(6)),
             // GA tid
             'ga=' + window.ga_tid,
             // Title
