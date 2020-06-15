@@ -95,7 +95,7 @@ And if you want to restrict your workers only for your website, all you need to 
 //const AllowedReferrer = 'skk.moe';
 ```
 
-- replace your domain with `skk.moe`, then remove `//`.
+- replace `skk.moe` with your domain, then remove `//`.
 
 > **Notice**: set `AllowedReferrer` value to `skk.moe` means all the subdomains of `skk.moe` will be allowed as well.
 
