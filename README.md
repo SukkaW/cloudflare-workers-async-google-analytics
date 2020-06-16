@@ -31,7 +31,7 @@ Just add those few lines of the code to your website, right before `</body>`. Do
 window.ga_tid = "UA-XXXXX-Y"; // {String} The trackerID of your site.
 window.ga_api = "https://example.com/xxx/"; // {String} The route of your cloudflare workers you just registered before.
 </script>
-<script src="https://cdn.jsdelivr.net/npm/cfga@1.0.2" async></script>
+<script src="https://cdn.jsdelivr.net/npm/cfga@1.0.3" async></script>
 ```
 
 ### 3. Watch this repo with `Releases Only`.
@@ -40,9 +40,17 @@ Click the `watch` button at the top of the repo and choose `Releases Only`, so y
 
 ## Notice
 
+### For SPA site
+
+`cfga.js` will send the data once the window's `load` event is fired.
+
+But you can still manually send the data again by calling `window.cfga()`, just like the original `analytics.js` with `ga('send', 'pageview')`.
+
+### Say hello to EasyList
+
 Recently `cloudflare-workers-async-google-analytics` has been blocked by [EasyList](https://github.com/easylist/easylist/commit/2ce2444193f5d479fb131e9dc89bbde9c82c8ad1). Great Job though. So I am going to play a cat & mouse game now.
 
-From `1.0.2` the random string will be added as a parameter to bypass EasyList. Also, this could help, too:
+From `1.0.3` the random string will be added as a parameter to bypass EasyList. Also, this could help, too:
 
 - Add the route `cfga/jquery.js` for your Cloudflare Workers.
 - Use setup as below:

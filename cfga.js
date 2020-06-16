@@ -59,6 +59,8 @@
         window.__ga_img.src = window.ga_api + '?' + pv_data.join('&');
     }
 
+    window.cfga = sendGA;
+
     if (document.readyState === 'complete') {
         sendGA();
     } else {

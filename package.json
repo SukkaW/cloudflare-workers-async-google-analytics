@@ -1,6 +1,6 @@
 {
   "name": "cfga",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The Cloudflare Workers implementation of an async Google Analytics",
   "main": "cfga.min.js",
   "scripts": {
