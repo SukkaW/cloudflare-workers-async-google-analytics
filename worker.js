@@ -101,7 +101,7 @@ async function response(event) {
         statusText: 'No Content'
     });
 
-    if (!_uuid) response.headers.set('Set-Cookie', `uuid=${uuid}; Expires=${new Date((new Date().getTime() + 365 * 86400 * 30 * 1000)).toGMTString()}; Path='/';`);
+    if (!_uuid) response.headers.set('Set-Cookie', `uuid=${uuid}; Expires=${new Date((new Date().getTime() + 365 * 86400 * 30 * 1000)).toGMTString()}; Path='/'; SameSite=Lax;`);
 
     return response
 }
