@@ -7,7 +7,24 @@
         t = performance && performance.timing,
         filterNumber = function (num) { return isNaN(num) || num == Infinity || num < 0 ? void 0 : num; },
         randomStr = function (num) { return Math.random().toString(36).slice(-num); },
-        randomNum = function (num) { return Math.ceil(Math.random() * (num - 1)) + 1; };
+        randomNum = function (num) { return Math.ceil(Math.random() * (num - 1)) + 1; },
+        fallback = function (id) {
+            // Original Google Analytics `analytics.js` Code
+            (function (window, document, tag, src, name) {
+                window['GoogleAnalyticsObject'] = name;
+                window[name] = window[name] || function () {
+                    (window[name].q = window[name].q || []).push(arguments);
+                };
+                window[name].l = 1 * new Date();
+                var element = document.createElement(tag);
+                first_element = document.getElementsByTagName(tag)[0];
+                element.async = true;
+                element.src = src;
+                first_element.parentNode.insertBefore(element, first_element);
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            ga('create', id, 'auto');
+            ga('send', 'pageview');
+        };
 
     // sendGA: collect data and send.
     function sendGA() {
@@ -56,6 +73,20 @@
         ];
 
         window.__ga_img = new Image();
+        const __ga_img_timeout = setTimeout(function () {
+            window.__ga_img.onerror = window.__ga_img.onload = null;
+            // Use original google analytics code if timeout
+            fallback(window.ga_tid);
+        }, 3000);
+        window.__ga_img.onerror = function () {
+            clearTimeout(__ga_img_timeout);
+            // Use original google analytics code if catched an error
+            fallback(window.ga_tid);
+        };
+        window.__ga_img.onload = function () {
+            // Remove fallback
+            clearTimeout(__ga_img_timeout);
+        };
         window.__ga_img.src = window.ga_api + '?' + pv_data.join('&');
     }
 
