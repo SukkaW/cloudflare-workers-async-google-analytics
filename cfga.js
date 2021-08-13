@@ -81,7 +81,10 @@
         window.__ga_img.onerror = function () {
             clearTimeout(__ga_img_timeout);
             // Use original google analytics code if catched an error
-            fallback(window.ga_tid);
+            fetch(window.__ga_img.src, { mode: 'cors' })
+                .catch(() => {
+                    fallback(window.ga_tid);
+                });
         };
         window.__ga_img.onload = function () {
             // Remove fallback
