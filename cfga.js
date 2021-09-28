@@ -4,7 +4,9 @@
         max = Math.max,
         //min = Math.min,
         performance = window.performance,
-        t = performance && performance.timing,
+        useNewPerformanceAPI = "getEntriesByType" in performance && "getEntriesByName" in performance,
+        t = useNewPerformanceAPI ? performance.getEntriesByType("navigation")[0] : performance.timing,
+        startTime = useNewPerformanceAPI ? t.startTime : t.navigationStart,
         filterNumber = function (num) { return isNaN(num) || num == Infinity || num < 0 ? void 0 : num; },
         randomStr = function (num) { return Math.random().toString(36).slice(-num); },
         randomNum = function (num) { return Math.ceil(Math.random() * (num - 1)) + 1; };
@@ -33,7 +35,7 @@
             // plt: Page Loading Time
             // open the page => window.onload
             // (window.onload)
-            'plt=' + filterNumber(t.loadEventStart - t.navigationStart || 0),
+            'plt=' + filterNumber(t.loadEventStart - startTime || 0),
             // dns: DNS Time
             'dns=' + filterNumber(t.domainLookupEnd - t.domainLookupStart || 0),
             // pdt: Page Dowenload Time
@@ -51,7 +53,7 @@
             'dit=' + filterNumber(t.domInteractive - t.domLoading || 0),
             // clt: Content Loading Time
             // open the page => DOMContentLoaded
-            'clt=' + filterNumber(t.domContentLoadedEventStart - t.navigationStart || 0),
+            'clt=' + filterNumber(t.domContentLoadedEventStart - startTime || 0),
             'z=' + Date.now()
         ];
 
