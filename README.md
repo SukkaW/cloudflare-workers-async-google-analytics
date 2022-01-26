@@ -78,7 +78,7 @@ Currently, `cloudflare-workers-async-google-analytics` and `cfga.min.js` only su
 - [`sr`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#sr): Screen Resolution
 - [`plt`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#plt): Page Load Time
 - [`dns`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#dns): DNS Time
-- [`pdt`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#pdt): Page Downloaad Time
+- [`pdt`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#pdt): Page Download Time
 - [`rrt`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#rrt): Redirect Response Time
 - [`tcp`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#tcp): TCP Connect Time
 - [`srt`](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#srt): Server Response Time
